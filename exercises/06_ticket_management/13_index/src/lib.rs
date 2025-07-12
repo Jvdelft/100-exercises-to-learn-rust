@@ -1,5 +1,8 @@
 // TODO: Implement `Index<&TicketId>` and `Index<TicketId>` for `TicketStore`.
 
+use core::panic;
+use std::ops::Index;
+
 use ticket_fields::{TicketDescription, TicketTitle};
 
 #[derive(Clone)]
@@ -55,6 +58,24 @@ impl TicketStore {
 
     pub fn get(&self, id: TicketId) -> Option<&Ticket> {
         self.tickets.iter().find(|&t| t.id == id)
+    }
+}
+
+impl Index<&TicketId> for TicketStore {
+    type Output = Ticket;
+
+    fn index(&self, index: &TicketId) -> &Self::Output {
+        let ticket = self.get(*index);
+        ticket.expect("Given ticket id is not found in the stored ones")
+    }
+}
+
+impl Index<TicketId> for TicketStore {
+    type Output = Ticket;
+
+    fn index(&self, index: TicketId) -> &Self::Output {
+        let ticket = self.get(index);
+        ticket.expect("Given ticket id is not found in the stored ones")
     }
 }
 
